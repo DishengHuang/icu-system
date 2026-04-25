@@ -1,0 +1,23 @@
+# Secrets – never commit
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env*.local
+
+# Large generated database – rebuilt from data/ CSVs on startup
+backend/eicu.db
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+.venv/
+*.egg-info/
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+
+# OS
+.DS_Store
