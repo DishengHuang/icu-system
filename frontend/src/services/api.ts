@@ -1,371 +1,605 @@
 import { PatientDetail, PatientSummary } from "@/types";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api";
+    process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api";
 
 type AgentChatPayload = {
-  patientId: number;
-  message: string;
-  history?: AgentChatHistoryMessage[];
-  context?: {
-    page?: string;
-    patientName?: string;
-    clinicalStatus?: string;
-    primaryDiagnosis?: string;
-  };
+    patientId: number;
+    message: string;
+    history?: AgentChatHistoryMessage[];
+    context?: {
+      page?: string;
+      patientName?: string;
+      clinicalStatus?: string;
+      primaryDiagnosis?: string;
+    };
 };
 
 export type AgentChatHistoryMessage = {
-  role: "user" | "assistant";
-  text: string;
+    role: "user" | "assistant";
+    text: string;
 };
 
 const fallbackPatients: PatientSummary[] = [
   {
-    id: 1,
-    display_id: 1001,
-    mrn: "ICU-1001",
-    full_name: "John Carter",
-    room: "ICU-12",
-    primary_diagnosis: "Sepsis with respiratory distress",
-    age: 67,
-    gender: "Male",
-    clinical_status: "Critical",
-    latest_hr: 102,
-    latest_spo2: 94,
+        id: 1,
+        display_id: 1001,
+        mrn: "ICU-1001",
+        full_name: "John Carter",
+        room: "ICU-12",
+        primary_diagnosis: "Sepsis with respiratory distress",
+        age: 67,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 102,
+        latest_spo2: 94,
   },
   {
-    id: 2,
-    display_id: 1002,
-    mrn: "ICU-1002",
-    full_name: "Maria Chen",
-    room: "ICU-07",
-    primary_diagnosis: "Post-operative monitoring",
-    age: 54,
-    gender: "Female",
-    clinical_status: "Stable",
-    latest_hr: 80,
-    latest_spo2: 99,
+        id: 2,
+        display_id: 1002,
+        mrn: "ICU-1002",
+        full_name: "Maria Chen",
+        room: "ICU-07",
+        primary_diagnosis: "Post-operative monitoring",
+        age: 54,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 80,
+        latest_spo2: 99,
   },
-];
+  {
+        id: 3,
+        display_id: 1003,
+        mrn: "ICU-1003",
+        full_name: "Robert Williams",
+        room: "ICU-03",
+        primary_diagnosis: "Acute myocardial infarction",
+        age: 72,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 118,
+        latest_spo2: 91,
+  },
+  {
+        id: 4,
+        display_id: 1004,
+        mrn: "ICU-1004",
+        full_name: "Patricia Johnson",
+        room: "ICU-05",
+        primary_diagnosis: "COPD exacerbation",
+        age: 63,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 88,
+        latest_spo2: 93,
+  },
+  {
+        id: 5,
+        display_id: 1005,
+        mrn: "ICU-1005",
+        full_name: "David Martinez",
+        room: "ICU-09",
+        primary_diagnosis: "Traumatic brain injury",
+        age: 41,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 95,
+        latest_spo2: 97,
+  },
+  {
+        id: 6,
+        display_id: 1006,
+        mrn: "ICU-1006",
+        full_name: "Linda Thompson",
+        room: "ICU-02",
+        primary_diagnosis: "Acute kidney injury",
+        age: 58,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 76,
+        latest_spo2: 98,
+  },
+  {
+        id: 7,
+        display_id: 1007,
+        mrn: "ICU-1007",
+        full_name: "James Anderson",
+        room: "ICU-14",
+        primary_diagnosis: "Pulmonary embolism",
+        age: 49,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 110,
+        latest_spo2: 89,
+  },
+  {
+        id: 8,
+        display_id: 1008,
+        mrn: "ICU-1008",
+        full_name: "Barbara Wilson",
+        room: "ICU-06",
+        primary_diagnosis: "Diabetic ketoacidosis",
+        age: 34,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 92,
+        latest_spo2: 96,
+  },
+  {
+        id: 9,
+        display_id: 1009,
+        mrn: "ICU-1009",
+        full_name: "Michael Taylor",
+        room: "ICU-11",
+        primary_diagnosis: "Acute liver failure",
+        age: 55,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 105,
+        latest_spo2: 95,
+  },
+  {
+        id: 10,
+        display_id: 1010,
+        mrn: "ICU-1010",
+        full_name: "Susan Harris",
+        room: "ICU-08",
+        primary_diagnosis: "Pneumonia with hypoxemia",
+        age: 69,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 84,
+        latest_spo2: 94,
+  },
+  {
+        id: 11,
+        display_id: 1011,
+        mrn: "ICU-1011",
+        full_name: "Charles Jackson",
+        room: "ICU-15",
+        primary_diagnosis: "Congestive heart failure",
+        age: 77,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 122,
+        latest_spo2: 88,
+  },
+  {
+        id: 12,
+        display_id: 1012,
+        mrn: "ICU-1012",
+        full_name: "Karen White",
+        room: "ICU-01",
+        primary_diagnosis: "Post-cardiac arrest care",
+        age: 61,
+        gender: "Female",
+        clinical_status: "Critical",
+        latest_hr: 98,
+        latest_spo2: 96,
+  },
+  {
+        id: 13,
+        display_id: 1013,
+        mrn: "ICU-1013",
+        full_name: "Thomas Moore",
+        room: "ICU-10",
+        primary_diagnosis: "Gastrointestinal bleed",
+        age: 45,
+        gender: "Male",
+        clinical_status: "Stable",
+        latest_hr: 79,
+        latest_spo2: 99,
+  },
+  {
+        id: 14,
+        display_id: 1014,
+        mrn: "ICU-1014",
+        full_name: "Nancy Davis",
+        room: "ICU-04",
+        primary_diagnosis: "Stroke - ischemic",
+        age: 70,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 72,
+        latest_spo2: 97,
+  },
+  {
+        id: 15,
+        display_id: 1015,
+        mrn: "ICU-1015",
+        full_name: "Christopher Garcia",
+        room: "ICU-13",
+        primary_diagnosis: "Septic shock",
+        age: 52,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 130,
+        latest_spo2: 90,
+  },
+  {
+        id: 16,
+        display_id: 1016,
+        mrn: "ICU-1016",
+        full_name: "Betty Rodriguez",
+        room: "ICU-16",
+        primary_diagnosis: "Acute pancreatitis",
+        age: 48,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 86,
+        latest_spo2: 97,
+  },
+  {
+        id: 17,
+        display_id: 1017,
+        mrn: "ICU-1017",
+        full_name: "Daniel Lewis",
+        room: "ICU-17",
+        primary_diagnosis: "ARDS",
+        age: 38,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 115,
+        latest_spo2: 87,
+  },
+  {
+        id: 18,
+        display_id: 1018,
+        mrn: "ICU-1018",
+        full_name: "Margaret Lee",
+        room: "ICU-18",
+        primary_diagnosis: "Hypertensive emergency",
+        age: 65,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 90,
+        latest_spo2: 98,
+  },
+  {
+        id: 19,
+        display_id: 1019,
+        mrn: "ICU-1019",
+        full_name: "Anthony Walker",
+        room: "ICU-19",
+        primary_diagnosis: "Meningitis - bacterial",
+        age: 29,
+        gender: "Male",
+        clinical_status: "Critical",
+        latest_hr: 108,
+        latest_spo2: 95,
+  },
+  {
+        id: 20,
+        display_id: 1020,
+        mrn: "ICU-1020",
+        full_name: "Sandra Hall",
+        room: "ICU-20",
+        primary_diagnosis: "Post-operative liver transplant",
+        age: 57,
+        gender: "Female",
+        clinical_status: "Stable",
+        latest_hr: 74,
+        latest_spo2: 99,
+  },
+  ];
 
 const fallbackPatientDetail: PatientDetail = {
-  ...fallbackPatients[0],
-  allergies: ["Penicillin", "Latex"],
-  medications: [
-    {
-      id: 1,
-      name: "Meropenem",
-      dosage: "1 g IV",
-      schedule: "Every 8 hours",
-      status: "Active",
+    ...fallbackPatients[0],
+    allergies: ["Penicillin", "Latex"],
+    medications: [
+      {
+              id: 1,
+              name: "Meropenem",
+              dosage: "1 g IV",
+              schedule: "Every 8 hours",
+              status: "Active",
+      },
+        ],
+    infusions: [
+      {
+              id: 1,
+              name: "Norepinephrine",
+              rate: "4 mcg/min",
+              status: "Running",
+      },
+      {
+              id: 2,
+              name: "Normal saline",
+              rate: "75 mL/hr",
+              status: "Running",
+      },
+        ],
+    intake_output: [
+      {
+              id: 1,
+              shift: "Last 24h",
+              intake_ml: 2450,
+              output_ml: 1980,
+              net_ml: 470,
+      },
+        ],
+    respiratory: [
+      {
+              id: 1,
+              device: "High-flow nasal cannula",
+              mode: "HFNC",
+              details: "FiO2 50%, flow 40 L/min",
+      },
+        ],
+    labs: [
+      {
+              id: 1,
+              name: "WBC",
+              value: "15.2 K/uL",
+              status: "High",
+      },
+      {
+              id: 2,
+              name: "Lactate",
+              value: "2.8 mmol/L",
+              status: "High",
+      },
+      {
+              id: 3,
+              name: "Creatinine",
+              value: "1.6 mg/dL",
+              status: "High",
+      },
+        ],
+    care_plan:
+          "Maintain hemodynamic stability, monitor cultures, and wean oxygen as tolerated.",
+    care_providers: [
+      { role: "Doctor", name: "Dr. Maya Chen" },
+      { role: "Respiratory Therapist", name: "Alex Rivera" },
+        ],
+    past_medical_history: ["Type 2 diabetes", "Hypertension", "CKD stage 2"],
+    diagnoses: [
+      {
+              id: 1,
+              diagnosis: "Septic shock",
+              status: "Confirmed",
+              clinician: "Dr. Maya Chen",
+      },
+        ],
+    notes: [
+      {
+              id: 1,
+              author: "Dr. Maya Chen",
+              note_type: "Progress Note",
+              content:
+                        "Patient responding to fluids and vasopressors. Continue antibiotic coverage.",
+      },
+        ],
+    treatments: ["IV fluids", "Broad-spectrum antibiotics", "Oxygen therapy"],
+    assigned_nurses: ["Nurse Taylor"],
+    vitals: {
+          heart_rate: 102,
+          blood_pressure: "102/64",
+          oxygen_saturation: 94,
+          temperature_c: 38.1,
     },
-  ],
-  infusions: [
-    {
-      id: 1,
-      name: "Norepinephrine",
-      rate: "4 mcg/min",
-      status: "Running",
-    },
-    {
-      id: 2,
-      name: "Normal saline",
-      rate: "75 mL/hr",
-      status: "Running",
-    },
-  ],
-  intake_output: [
-    {
-      id: 1,
-      shift: "Last 24h",
-      intake_ml: 2450,
-      output_ml: 1980,
-      net_ml: 470,
-    },
-  ],
-  respiratory: [
-    {
-      id: 1,
-      device: "High-flow nasal cannula",
-      mode: "HFNC",
-      details: "FiO2 50%, flow 40 L/min",
-    },
-  ],
-  labs: [
-    {
-      id: 1,
-      name: "WBC",
-      value: "15.2 K/uL",
-      status: "High",
-    },
-    {
-      id: 2,
-      name: "Lactate",
-      value: "2.8 mmol/L",
-      status: "High",
-    },
-    {
-      id: 3,
-      name: "Creatinine",
-      value: "1.6 mg/dL",
-      status: "High",
-    },
-  ],
-  care_plan:
-    "Maintain hemodynamic stability, monitor cultures, and wean oxygen as tolerated.",
-  care_providers: [
-    { role: "Doctor", name: "Dr. Maya Chen" },
-    { role: "Respiratory Therapist", name: "Alex Rivera" },
-  ],
-  past_medical_history: ["Type 2 diabetes", "Hypertension", "CKD stage 2"],
-  diagnoses: [
-    {
-      id: 1,
-      diagnosis: "Septic shock",
-      status: "Confirmed",
-      clinician: "Dr. Maya Chen",
-    },
-  ],
-  notes: [
-    {
-      id: 1,
-      author: "Dr. Maya Chen",
-      note_type: "Progress Note",
-      content:
-        "Patient responding to fluids and vasopressors. Continue antibiotic coverage.",
-    },
-  ],
-  treatments: ["IV fluids", "Broad-spectrum antibiotics", "Oxygen therapy"],
-  assigned_nurses: ["Nurse Taylor"],
-  vitals: {
-    heart_rate: 102,
-    blood_pressure: "102/64",
-    oxygen_saturation: 94,
-    temperature_c: 38.1,
-  },
 };
 
 async function request<T>(path: string, fallback: T): Promise<T> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      cache: "no-store",
-    });
-    if (!response.ok) {
-      return fallback;
+    try {
+          const response = await fetch(`${API_BASE_URL}${path}`, {
+                  cache: "no-store",
+          });
+          if (!response.ok) {
+                  return fallback;
+          }
+          return (await response.json()) as T;
+    } catch {
+          return fallback;
     }
-    return (await response.json()) as T;
-  } catch {
-    return fallback;
-  }
 }
 
 export function getPatients(query?: string): Promise<PatientSummary[]> {
-  const suffix = query ? `?q=${encodeURIComponent(query)}` : "";
-  return request(`/patients${suffix}`, fallbackPatients);
+    const suffix = query ? `?q=${encodeURIComponent(query)}` : "";
+    return request(`/patients${suffix}`, fallbackPatients);
 }
 
 export function getPatient(patientId: string): Promise<PatientDetail> {
-  const fallback =
-    patientId === "2"
-      ? {
-          ...fallbackPatientDetail,
-          ...fallbackPatients[1],
-          full_name: "Maria Chen",
-          allergies: ["Aspirin sensitivity"],
-          assigned_nurses: ["Nurse Patel"],
-          primary_diagnosis: "Post-operative monitoring",
-          infusions: [
-            {
-              id: 3,
-              name: "Nitroglycerin",
-              rate: "5 mcg/min",
-              status: "Tapering",
-            },
-          ],
-          intake_output: [
-            {
-              id: 2,
-              shift: "Last 24h",
-              intake_ml: 1800,
-              output_ml: 2100,
-              net_ml: -300,
-            },
-          ],
-          respiratory: [
-            {
-              id: 2,
-              device: "Nasal cannula",
-              mode: "Low-flow O2",
-              details: "2 L/min, SpO2 goal > 94%",
-            },
-          ],
-          labs: [
-            {
-              id: 4,
-              name: "Troponin",
-              value: "0.19 ng/mL",
-              status: "High",
-            },
-            {
-              id: 5,
-              name: "Potassium",
-              value: "4.1 mmol/L",
-              status: "Normal",
-            },
-          ],
-          care_plan: "Monitor cardiac rhythm, trend troponins, and manage pain.",
-          vitals: {
-            heart_rate: 80,
-            blood_pressure: "128/78",
-            oxygen_saturation: 99,
-            temperature_c: 36.8,
-          },
+    const fallback =
+          patientId === "2"
+        ? {
+                    ...fallbackPatientDetail,
+                    ...fallbackPatients[1],
+                    full_name: "Maria Chen",
+                    allergies: ["Aspirin sensitivity"],
+                    assigned_nurses: ["Nurse Patel"],
+                    primary_diagnosis: "Post-operative monitoring",
+                    infusions: [
+                      {
+                                      id: 3,
+                                      name: "Nitroglycerin",
+                                      rate: "5 mcg/min",
+                                      status: "Tapering",
+                      },
+                                ],
+                    intake_output: [
+                      {
+                                      id: 2,
+                                      shift: "Last 24h",
+                                      intake_ml: 1800,
+                                      output_ml: 2100,
+                                      net_ml: -300,
+                      },
+                                ],
+                    respiratory: [
+                      {
+                                      id: 2,
+                                      device: "Nasal cannula",
+                                      mode: "Low-flow O2",
+                                      details: "2 L/min, SpO2 goal > 94%",
+                      },
+                                ],
+                    labs: [
+                      {
+                                      id: 4,
+                                      name: "Troponin",
+                                      value: "0.19 ng/mL",
+                                      status: "High",
+                      },
+                      {
+                                      id: 5,
+                                      name: "Potassium",
+                                      value: "4.1 mmol/L",
+                                      status: "Normal",
+                      },
+                                ],
+                    care_plan: "Monitor cardiac rhythm, trend troponins, and manage pain.",
+                    vitals: {
+                                  heart_rate: 80,
+                                  blood_pressure: "128/78",
+                                  oxygen_saturation: 99,
+                                  temperature_c: 36.8,
+                    },
         }
-      : fallbackPatientDetail;
+            : fallbackPatientDetail;
 
   return request(`/patients/${patientId}`, fallback);
 }
 
 export async function sendAgentChatMessage(
-  payload: AgentChatPayload
-): Promise<string> {
-  const response = await fetch(`${API_BASE_URL}/agent/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      patient_id: payload.patientId,
-      message: payload.message,
-      history: payload.history,
-      context: payload.context
-        ? {
-            page: payload.context.page,
-            patient_name: payload.context.patientName,
-            clinical_status: payload.context.clinicalStatus,
-            primary_diagnosis: payload.context.primaryDiagnosis,
-          }
-        : undefined,
-    }),
-  });
+    payload: AgentChatPayload
+  ): Promise<string> {
+    const response = await fetch(`${API_BASE_URL}/agent/chat`, {
+          method: "POST",
+          headers: {
+                  "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+                  patient_id: payload.patientId,
+                  message: payload.message,
+                  history: payload.history,
+                  context: payload.context
+                    ? {
+                                  page: payload.context.page,
+                                  patient_name: payload.context.patientName,
+                                  clinical_status: payload.context.clinicalStatus,
+                                  primary_diagnosis: payload.context.primaryDiagnosis,
+                    }
+                            : undefined,
+          }),
+    });
 
   if (!response.ok) {
-    let detail = "Agent request failed";
-    try {
-      const errorData = (await response.json()) as { detail?: string };
-      if (errorData.detail) {
-        detail = errorData.detail;
-      }
-    } catch {
-      // Ignore JSON parse errors and fall back to the generic message.
-    }
-    throw new Error(detail);
+        let detail = "Agent request failed";
+        try {
+                const errorData = (await response.json()) as { detail?: string };
+                if (errorData.detail) {
+                          detail = errorData.detail;
+                }
+        } catch {
+                // Ignore JSON parse errors and fall back to the generic message.
+        }
+        throw new Error(detail);
   }
 
   const data = (await response.json()) as { reply?: string };
-  if (!data.reply) {
-    throw new Error("Agent reply missing");
-  }
+    if (!data.reply) {
+          throw new Error("Agent reply missing");
+    }
 
   return data.reply;
 }
 
 type StreamAgentChatHandlers = {
-  onDelta: (chunk: string) => void;
-  onDone?: () => void;
+    onDelta: (chunk: string) => void;
+    onDone?: () => void;
 };
 
 function handleStreamEventBlock(
-  eventBlock: string,
-  handlers: StreamAgentChatHandlers
-): void {
-  const dataLines = eventBlock
-    .split("\n")
-    .filter((line) => line.startsWith("data:"))
-    .map((line) => line.slice(5).trim());
+    eventBlock: string,
+    handlers: StreamAgentChatHandlers
+  ): void {
+    const dataLines = eventBlock
+      .split("\n")
+      .filter((line) => line.startsWith("data:"))
+      .map((line) => line.slice(5).trim());
 
   if (dataLines.length === 0) {
-    return;
+        return;
   }
 
   const payloadText = dataLines.join("\n");
-  const eventData = JSON.parse(payloadText) as {
-    type?: string;
-    text?: string;
-  };
+    const eventData = JSON.parse(payloadText) as {
+          type?: string;
+          text?: string;
+    };
 
   if (eventData.type === "delta" && eventData.text) {
-    handlers.onDelta(eventData.text);
+        handlers.onDelta(eventData.text);
   } else if (eventData.type === "error") {
-    throw new Error(eventData.text || "Agent stream failed");
+        throw new Error(eventData.text || "Agent stream failed");
   } else if (eventData.type === "done") {
-    handlers.onDone?.();
+        handlers.onDone?.();
   }
 }
 
 export async function streamAgentChatMessage(
-  payload: AgentChatPayload,
-  handlers: StreamAgentChatHandlers
-): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/agent/chat/stream`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      patient_id: payload.patientId,
-      message: payload.message,
-      history: payload.history,
-      context: payload.context
-        ? {
-            page: payload.context.page,
-            patient_name: payload.context.patientName,
-            clinical_status: payload.context.clinicalStatus,
-            primary_diagnosis: payload.context.primaryDiagnosis,
-          }
-        : undefined,
-    }),
-  });
+    payload: AgentChatPayload,
+    handlers: StreamAgentChatHandlers
+  ): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/agent/chat/stream`, {
+          method: "POST",
+          headers: {
+                  "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+                  patient_id: payload.patientId,
+                  message: payload.message,
+                  history: payload.history,
+                  context: payload.context
+                    ? {
+                                  page: payload.context.page,
+                                  patient_name: payload.context.patientName,
+                                  clinical_status: payload.context.clinicalStatus,
+                                  primary_diagnosis: payload.context.primaryDiagnosis,
+                    }
+                            : undefined,
+          }),
+    });
 
   if (!response.ok) {
-    let detail = "Agent stream request failed";
-    try {
-      const errorData = (await response.json()) as { detail?: string };
-      if (errorData.detail) {
-        detail = errorData.detail;
-      }
-    } catch {
-      // Ignore JSON parse errors and fall back to the generic message.
-    }
-    throw new Error(detail);
+        let detail = "Agent stream request failed";
+        try {
+                const errorData = (await response.json()) as { detail?: string };
+                if (errorData.detail) {
+                          detail = errorData.detail;
+                }
+        } catch {
+                // Ignore JSON parse errors and fall back to the generic message.
+        }
+        throw new Error(detail);
   }
 
   if (!response.body) {
-    throw new Error("Streaming response body is unavailable.");
+        throw new Error("Streaming response body is unavailable.");
   }
 
   const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
+    const decoder = new TextDecoder();
+    let buffer = "";
 
   while (true) {
-    const { value, done } = await reader.read();
-    if (done) {
-      break;
-    }
+        const { value, done } = await reader.read();
+        if (done) {
+                break;
+        }
 
-    buffer += decoder.decode(value, { stream: true });
-    const events = buffer.split("\n\n");
-    buffer = events.pop() ?? "";
+      buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split("\n\n");
+        buffer = events.pop() ?? "";
 
-    for (const eventBlock of events) {
-      handleStreamEventBlock(eventBlock, handlers);
-    }
+      for (const eventBlock of events) {
+              handleStreamEventBlock(eventBlock, handlers);
+      }
   }
 
   const trailing = buffer.trim();
-  if (trailing) {
-    handleStreamEventBlock(trailing, handlers);
-  }
+    if (trailing) {
+          handleStreamEventBlock(trailing, handlers);
+    }
 }
